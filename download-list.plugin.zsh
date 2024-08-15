@@ -51,7 +51,8 @@ download-list() {
     while IFS= read -r link; do
         attempts=3
         while [ $attempts -gt 0 ]; do
-            axel -n "$num_threads" "$link" && sed -i "/$link/d" "$file" && break
+            ESCAPED_LINK=$(printf '%s\n' "$link" | sed -e 's/[\/&]/\\&/g')
+            axel -n "$num_threads" "$link" && sed -i "/$ESCAPED_LINK/d" "$file" && break
             attempts=$((attempts-1))
             echo "Retrying download of $link (attempts left: $attempts)..."
         done
